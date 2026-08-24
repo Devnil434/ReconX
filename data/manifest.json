@@ -1,0 +1,15 @@
+{
+  "name": "RecoverRecon Synthetic Financial Universe",
+  "version": "0.1.0",
+  "seed": 42,
+  "currency": "INR",
+  "money_unit": "paise",
+  "records": 1000,
+  "sources": [
+    "payments",
+    "settlements",
+    "bank_transactions",
+    "refunds"
+  ],
+  "purpose": "Reconciliation engine evaluation"
+}
