@@ -6,8 +6,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.db.session import Base
 
 
-class Settlement(Base):
-    __tablename__ = "settlements"
+class Payment(Base):
+    __tablename__ = "payments"
 
     id: Mapped[int] = mapped_column(
         BigInteger,
@@ -15,27 +15,32 @@ class Settlement(Base):
         autoincrement=True,
     )
 
-    razorpay_settlement_id: Mapped[str] = mapped_column(
+    razorpay_payment_id: Mapped[str] = mapped_column(
         String(64),
         unique=True,
         index=True,
         nullable=False,
     )
 
-    payment_id: Mapped[str | None] = mapped_column(
+    order_id: Mapped[str] = mapped_column(
         String(64),
-        index=True,
-        nullable=True,
-    )
-
-    utr: Mapped[str] = mapped_column(
-        String(128),
         index=True,
         nullable=False,
     )
 
     amount: Mapped[int] = mapped_column(
         BigInteger,
+        nullable=False,
+    )
+
+    currency: Mapped[str] = mapped_column(
+        String(3),
+        nullable=False,
+        default="INR",
+    )
+
+    status: Mapped[str] = mapped_column(
+        String(32),
         nullable=False,
     )
 
@@ -51,12 +56,12 @@ class Settlement(Base):
         default=0,
     )
 
-    status: Mapped[str] = mapped_column(
-        String(32),
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
         nullable=False,
     )
 
-    settlement_date: Mapped[datetime] = mapped_column(
+    captured_at: Mapped[datetime | None] = mapped_column(
         DateTime,
-        nullable=False,
+        nullable=True,
     )
