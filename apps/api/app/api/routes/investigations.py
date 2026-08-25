@@ -1,3 +1,4 @@
+import json
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -107,3 +108,43 @@ async def run_investigation(
     )
 
     return result.model_dump()
+
+
+@router.get("/{case_id}")
+def get_investigation(
+    case_id: str,
+    db: Session = Depends(get_db),
+):
+
+    investigation = db.scalar(
+        select(Investigation).where(
+            Investigation.case_id
+            == case_id
+        )
+    )
+
+    if not investigation:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Investigation not found",
+        )
+
+    return {
+        "case_id": investigation.case_id,
+        "status": investigation.status,
+        "root_cause": investigation.root_cause,
+        "confidence": investigation.confidence,
+        "recommendation": (
+            investigation.recommendation
+        ),
+        "summary": investigation.summary,
+        "evidence": json.loads(
+            investigation.evidence_json
+            or "[]"
+        ),
+        "hypotheses": json.loads(
+            investigation.hypotheses_json
+            or "[]"
+        ),
+    }

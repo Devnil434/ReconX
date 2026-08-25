@@ -8,21 +8,35 @@ SAFE_AUTO_RESOLUTION_CAUSES = {
 }
 
 
+def is_safe_to_auto_resolve(
+    investigation,
+) -> bool:
+
+    return (
+        investigation.confidence >= 0.95
+        and investigation.recommendation == "AUTO_RESOLVE"
+        and len(getattr(investigation, "unresolved_questions", [])) == 0
+    )
+
+
 class PolicyService:
 
     def decide(
         self,
-        root_cause: str,
-        confidence: float,
-    ) -> InvestigationDecision:
+        investigation,
+    ) -> str:
+
+        confidence = getattr(investigation, "confidence", 0.0)
+        recommendation = getattr(investigation, "recommendation", "HUMAN_REVIEW")
 
         if (
-            confidence >= 0.95
-            and root_cause in SAFE_AUTO_RESOLUTION_CAUSES
+            recommendation == "AUTO_RESOLVE"
+            and confidence >= 0.95
+            and is_safe_to_auto_resolve(investigation)
         ):
-            return InvestigationDecision.AUTO_RESOLVE
+            return "AUTO_RESOLVE"
 
         if confidence >= 0.75:
-            return InvestigationDecision.HUMAN_REVIEW
+            return "HUMAN_REVIEW"
 
-        return InvestigationDecision.BLOCK
+        return "BLOCK"

@@ -8,9 +8,8 @@ from app.models.exception import ReconciliationException
 from app.models.audit_log import AuditLog
 from app.models.webhook_event import WebhookEvent
 from app.models.investigation import Investigation
-from app.models.investigation_evidence import (
-    InvestigationEvidence,
-)
+from app.models.investigation_evidence import InvestigationEvidence
+from app.models.investigation_trace import InvestigationTrace
 
 __all__ = [
     "Payment",
@@ -24,4 +23,5 @@ __all__ = [
     "WebhookEvent",
     "Investigation",
     "InvestigationEvidence",
+    "InvestigationTrace",
 ]
