@@ -26,6 +26,42 @@ router = APIRouter(
 )
 
 
+@router.get("")
+def list_investigations(
+    limit: int = 50,
+    db: Session = Depends(get_db),
+):
+    exceptions = list(
+        db.scalars(
+            select(ReconciliationException)
+            .order_by(ReconciliationException.created_at.desc())
+            .limit(limit)
+        ).all()
+    )
+
+    results = []
+    for exc in exceptions:
+        inv = db.scalar(
+            select(Investigation).where(Investigation.case_id == exc.case_id)
+        )
+        results.append({
+            "case_id": exc.case_id,
+            "payment_id": exc.payment_id,
+            "exception_type": exc.exception_type,
+            "severity": exc.severity,
+            "expected_amount": exc.expected_amount,
+            "actual_amount": exc.actual_amount,
+            "difference": exc.difference,
+            "status": inv.status if inv else exc.status,
+            "recommendation": inv.recommendation if inv else None,
+            "confidence": inv.confidence if inv else None,
+            "root_cause": inv.root_cause if inv else None,
+            "created_at": exc.created_at.isoformat() if exc.created_at else None,
+        })
+
+    return results
+
+
 @router.post("/{case_id}/run")
 async def run_investigation(
     case_id: str,

@@ -10,6 +10,9 @@ from app.models.webhook_event import WebhookEvent
 from app.models.investigation import Investigation
 from app.models.investigation_evidence import InvestigationEvidence
 from app.models.investigation_trace import InvestigationTrace
+from app.models.policy_decision import PolicyDecision
+from app.models.action import Action
+from app.models.approval import Approval
 
 __all__ = [
     "Payment",
@@ -24,4 +27,7 @@ __all__ = [
     "Investigation",
     "InvestigationEvidence",
     "InvestigationTrace",
+    "PolicyDecision",
+    "Action",
+    "Approval",
 ]
