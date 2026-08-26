@@ -31,6 +31,38 @@ services:
       timeout: 5s
       retries: 5
 
+  api:
+    build:
+      context: ./apps/api
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg://reconx:reconx_dev_password@postgres:5432/reconx
+      REDIS_URL: redis://redis:6379/0
+      RAZORPAY_WEBHOOK_SECRET: 22WNn-ET.Xaqncn
+      RAZORPAY_MODE: mock
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: ./apps/api
+    command: python worker.py
+    environment:
+      DATABASE_URL: postgresql+psycopg://reconx:reconx_dev_password@postgres:5432/reconx
+      REDIS_URL: redis://redis:6379/0
+      RAZORPAY_WEBHOOK_SECRET: 22WNn-ET.Xaqncn
+      RAZORPAY_MODE: mock
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
 volumes:
   postgres_data:
-  redis_data:
+  redis_data:

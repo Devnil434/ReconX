@@ -94,7 +94,7 @@ def run_ai_evaluation():
     root_cause_acc = (correct_cause / total) * 100.0
     action_acc = (correct_action / total) * 100.0
     evidence_acc = (grounded_count / total) * 100.0
-    avg_conf = (sum(r['confidence'] for r in results) / total) * 100.0
+    avg_conf = (sum(float(r['confidence']) for r in results) / total) * 100.0
 
     print('================================================================================')
     print('                RECONX AI EVALUATION & CONFUSION MATRIX                         ')
