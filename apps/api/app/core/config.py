@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     razorpay_webhook_secret: str | None = None
     razorpay_mode: str = "mock"
 
+    openai_api_key: str | None = None
+    openai_model: str = "gpt-4o-mini"
+
 
     model_config = SettingsConfigDict(
         env_file=".env",
