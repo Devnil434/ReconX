@@ -17,7 +17,14 @@ from app.api.routes.reconciliation import (
 from app.api.routes.webhooks import (
     router as webhook_router,
 )
+from app.api.routes.demo import (
+    router as demo_router,
+)
+from app.api.routes.system import (
+    router as system_router,
+)
 from app.core.logging import configure_logging
+from app.core.middleware import RequestIDMiddleware
 
 configure_logging()
 
@@ -29,6 +36,8 @@ app = FastAPI(
     ),
     version="0.2.0",
 )
+
+app.add_middleware(RequestIDMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
@@ -65,4 +74,12 @@ app.include_router(
 
 app.include_router(
     cases_router
+)
+
+app.include_router(
+    system_router
+)
+
+app.include_router(
+    demo_router
 )

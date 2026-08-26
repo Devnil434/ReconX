@@ -84,37 +84,38 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Premium deep navy financial dashboard palette */
+  --background: oklch(0.09 0.025 258);
+  --foreground: oklch(0.96 0.01 258);
+  --card: oklch(0.13 0.022 258);
+  --card-foreground: oklch(0.95 0.01 258);
+  --popover: oklch(0.13 0.022 258);
+  --popover-foreground: oklch(0.95 0.01 258);
+  --primary: oklch(0.63 0.22 265);      /* electric indigo */
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.19 0.03 258);
+  --secondary-foreground: oklch(0.85 0.04 258);
+  --muted: oklch(0.17 0.022 258);
+  --muted-foreground: oklch(0.56 0.04 258);
+  --accent: oklch(0.20 0.03 265);
+  --accent-foreground: oklch(0.95 0.01 258);
+  --destructive: oklch(0.65 0.22 25);
+  --border: oklch(0.22 0.04 265 / 60%);
+  --input: oklch(0.19 0.03 265);
+  --ring: oklch(0.52 0.16 265);
+  --chart-1: oklch(0.63 0.22 265);      /* indigo */
+  --chart-2: oklch(0.70 0.18 155);      /* emerald */
+  --chart-3: oklch(0.76 0.17  78);      /* amber */
+  --chart-4: oklch(0.65 0.22  25);      /* red */
+  --chart-5: oklch(0.70 0.20 300);      /* purple */
+  --sidebar: oklch(0.11 0.022 258);
+  --sidebar-foreground: oklch(0.95 0.01 258);
+  --sidebar-primary: oklch(0.63 0.22 265);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.18 0.025 265);
+  --sidebar-accent-foreground: oklch(0.95 0.01 258);
+  --sidebar-border: oklch(0.22 0.04 265 / 50%);
+  --sidebar-ring: oklch(0.52 0.16 265);
 }
 
 @layer base {
@@ -128,3 +129,55 @@
     @apply font-sans;
   }
 }
+
+/* ─── Premium Dashboard Utilities ─────────────────────── */
+
+/* Subtle grid background for dark pages */
+.bg-grid {
+  background-image:
+    linear-gradient(oklch(0.22 0.04 265 / 25%) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.22 0.04 265 / 25%) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Glassmorphism card surface */
+.glass {
+  backdrop-filter: blur(12px) saturate(150%);
+  background: oklch(0.13 0.022 258 / 80%);
+  border: 1px solid oklch(0.25 0.04 265 / 40%);
+}
+
+/* Glow effects */
+.glow-indigo  { box-shadow: 0 0 24px oklch(0.63 0.22 265 / 25%); }
+.glow-emerald { box-shadow: 0 0 24px oklch(0.70 0.18 155 / 25%); }
+.glow-amber   { box-shadow: 0 0 24px oklch(0.76 0.17  78 / 25%); }
+.glow-red     { box-shadow: 0 0 24px oklch(0.65 0.22  25 / 25%); }
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, oklch(0.82 0.12 265), oklch(0.72 0.22 290));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Status pulse ring */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.4); }
+}
+.status-pulse { animation: status-pulse 2s ease-in-out infinite; }
+
+/* Slide-over drawer */
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+.drawer-enter { animation: slide-in-right 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* Fade-up for cards */
+@keyframes fade-up {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.fade-up { animation: fade-up 0.4s ease-out forwards; }
