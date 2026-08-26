@@ -1,4 +1,4 @@
-# RecoverRecon Control Center Dashboard
+# ReconX Control Center Dashboard
 
 This is the Next.js frontend application for **ReconX**, providing a premium real-time command center for monitoring payment reconciliation, ledger health, system workers, and AI investigation details.
 

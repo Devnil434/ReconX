@@ -1,6 +1,6 @@
 # ReconX Architecture Overview
 
-RecoverRecon is an autonomous payment reconciliation investigator designed to process, match, and resolve transaction discrepancies for Razorpay payment operations.
+ReconX is an autonomous payment reconciliation investigator designed to process, match, and resolve transaction discrepancies for Razorpay payment operations.
 
 ---
 
