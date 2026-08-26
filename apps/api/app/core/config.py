@@ -8,24 +8,23 @@ ROOT_ENV = ROOT_DIR / ".env"
 
 
 class Settings(BaseSettings):
+
     app_name: str = "ReconX"
-    app_env: str = "development"
-    debug: bool = True
+    database_url: str = "postgresql+psycopg://reconx:reconx_dev_password@localhost:5432/reconx"
+    redis_url: str = "redis://localhost:6379/0"
 
-    database_url: str
-    redis_url: str
-
-    razorpay_key_id: str = ""
-    razorpay_key_secret: str = ""
-    razorpay_webhook_secret: str = ""
-
-    openai_api_key: str = ""
-    openai_model: str = "gpt-5-mini"
+    razorpay_key_id: str | None = None
+    razorpay_key_secret: str | None = None
+    razorpay_webhook_secret: str | None = None
 
     model_config = SettingsConfigDict(
         env_file=".env",
+        env_file_encoding="utf-8",
         extra="ignore",
     )
+
+
+settings = Settings()
 
 
 @lru_cache

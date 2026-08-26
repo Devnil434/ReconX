@@ -6,16 +6,13 @@ from sqlalchemy import (
     String,
     Text,
 )
-from sqlalchemy.orm import (
-    Mapped,
-    mapped_column,
-)
+from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
 
 
-class WebhookEvent(Base):
-    __tablename__ = "webhook_events"
+class AuditEvent(Base):
+    __tablename__ = "audit_events"
 
     id: Mapped[int] = mapped_column(
         BigInteger,
@@ -30,9 +27,19 @@ class WebhookEvent(Base):
         nullable=False,
     )
 
-    event_type: Mapped[str] = mapped_column(
-        String(128),
+    case_id: Mapped[str] = mapped_column(
+        String(64),
         index=True,
+        nullable=False,
+    )
+
+    event_type: Mapped[str] = mapped_column(
+        String(64),
+        nullable=False,
+    )
+
+    actor: Mapped[str] = mapped_column(
+        String(128),
         nullable=False,
     )
 
@@ -41,30 +48,7 @@ class WebhookEvent(Base):
         nullable=False,
     )
 
-    signature: Mapped[str] = mapped_column(
-        String(256),
-        nullable=False,
-    )
-
-    status: Mapped[str] = mapped_column(
-        String(32),
-        nullable=False,
-        default="received",
-    )
-
-    attempts: Mapped[int] = mapped_column(
-        default=0,
-        nullable=False,
-    )
-
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=False,
-    )
-
-    processed_at: Mapped[
-        datetime | None
-    ] = mapped_column(
-        DateTime,
-        nullable=True,
     )

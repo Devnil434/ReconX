@@ -100,13 +100,14 @@ export default function Home() {
     ? `${(summary.match_rate * 100).toFixed(1)}%`
     : "0.0%";
 
-  const autoResolvedCount = cases.filter(
+  // Categorize cases into 3 lanes
+  const autoResolveCases = cases.filter(
     (c) => c.recommendation === "AUTO_RESOLVE"
-  ).length;
-
-  const autoResolvedRate = cases.length
-    ? `${((autoResolvedCount / cases.length) * 100).toFixed(1)}%`
-    : "0.0%";
+  );
+  const humanReviewCases = cases.filter(
+    (c) => !c.recommendation || c.recommendation === "HUMAN_REVIEW"
+  );
+  const blockedCases = cases.filter((c) => c.recommendation === "BLOCK");
 
   return (
     <main className="min-h-screen bg-background p-6 md:p-10">
@@ -127,7 +128,7 @@ export default function Home() {
               Reconciliation Control Center
             </h1>
             <p className="text-sm text-muted-foreground sm:text-base">
-              Autonomous payment reconciliation, ledger integrity & AI investigation.
+              Autonomous payment reconciliation, ledger integrity & policy-driven resolution.
             </p>
           </div>
 
@@ -184,12 +185,137 @@ export default function Home() {
           />
           <Metric
             title="Auto Resolved"
-            value={autoResolvedRate}
-            subtitle={`${autoResolvedCount} cases resolved by policy`}
+            value={cases.length ? `${autoResolveCases.length}` : "0"}
+            subtitle={`${autoResolveCases.length} eligible by policy`}
           />
         </div>
 
-        {/* Selected Case Active Investigation Panel */}
+        {/* 3-Lane Case Control Board */}
+        <div>
+          <h2 className="text-xl font-bold tracking-tight mb-4">
+            Autonomous Case Control Board
+          </h2>
+          <div className="grid gap-4 md:grid-cols-3">
+            {/* Lane 1: Auto Resolve */}
+            <Card className="border-emerald-500/30 bg-emerald-500/5">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base text-emerald-600 dark:text-emerald-400 font-semibold">
+                    AUTO-RESOLVE
+                  </CardTitle>
+                  <Badge variant="default" className="bg-emerald-600">
+                    {autoResolveCases.length}
+                  </Badge>
+                </div>
+                <CardDescription className="text-xs">
+                  Low risk | Difference balanced | High confidence ($\ge 95\%$)
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {autoResolveCases.slice(0, 4).map((c) => (
+                  <div
+                    key={c.case_id}
+                    onClick={() => setSelectedCaseId(c.case_id)}
+                    className="cursor-pointer rounded-md border border-emerald-500/20 bg-background/80 p-2.5 text-xs transition-all hover:bg-muted"
+                  >
+                    <div className="flex justify-between font-mono font-medium">
+                      <span>{c.case_id}</span>
+                      <span>₹{(Math.abs(c.difference) / 100).toFixed(2)}</span>
+                    </div>
+                    <p className="text-muted-foreground capitalize mt-1">
+                      {c.exception_type.replace(/_/g, " ")}
+                    </p>
+                  </div>
+                ))}
+                {autoResolveCases.length === 0 && (
+                  <p className="text-xs text-muted-foreground py-4 text-center">
+                    No cases in this lane
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Lane 2: Human Review */}
+            <Card className="border-amber-500/30 bg-amber-500/5">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base text-amber-600 dark:text-amber-400 font-semibold">
+                    HUMAN REVIEW
+                  </CardTitle>
+                  <Badge variant="secondary" className="bg-amber-500/20 text-amber-700 dark:text-amber-300">
+                    {humanReviewCases.length}
+                  </Badge>
+                </div>
+                <CardDescription className="text-xs">
+                  Medium risk | Needs analyst review or approval
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {humanReviewCases.slice(0, 4).map((c) => (
+                  <div
+                    key={c.case_id}
+                    onClick={() => setSelectedCaseId(c.case_id)}
+                    className="cursor-pointer rounded-md border border-amber-500/20 bg-background/80 p-2.5 text-xs transition-all hover:bg-muted"
+                  >
+                    <div className="flex justify-between font-mono font-medium">
+                      <span>{c.case_id}</span>
+                      <span>₹{(Math.abs(c.difference) / 100).toFixed(2)}</span>
+                    </div>
+                    <p className="text-muted-foreground capitalize mt-1">
+                      {c.exception_type.replace(/_/g, " ")}
+                    </p>
+                  </div>
+                ))}
+                {humanReviewCases.length === 0 && (
+                  <p className="text-xs text-muted-foreground py-4 text-center">
+                    No cases in this lane
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Lane 3: Blocked */}
+            <Card className="border-destructive/30 bg-destructive/5">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base text-destructive font-semibold">
+                    BLOCKED
+                  </CardTitle>
+                  <Badge variant="destructive">
+                    {blockedCases.length}
+                  </Badge>
+                </div>
+                <CardDescription className="text-xs">
+                  High risk | Duplicate settlement or critical variance
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {blockedCases.slice(0, 4).map((c) => (
+                  <div
+                    key={c.case_id}
+                    onClick={() => setSelectedCaseId(c.case_id)}
+                    className="cursor-pointer rounded-md border border-destructive/20 bg-background/80 p-2.5 text-xs transition-all hover:bg-muted"
+                  >
+                    <div className="flex justify-between font-mono font-medium">
+                      <span>{c.case_id}</span>
+                      <span>₹{(Math.abs(c.difference) / 100).toFixed(2)}</span>
+                    </div>
+                    <p className="text-muted-foreground capitalize mt-1">
+                      {c.exception_type.replace(/_/g, " ")}
+                    </p>
+                  </div>
+                ))}
+                {blockedCases.length === 0 && (
+                  <p className="text-xs text-muted-foreground py-4 text-center">
+                    No cases in this lane
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Selected Case Active Investigation & Action Panel */}
         {selectedCaseId && (
           <Card className="border-primary/40 shadow-lg">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
@@ -198,7 +324,7 @@ export default function Home() {
                   Active Investigation: {selectedCaseId}
                 </CardTitle>
                 <CardDescription>
-                  Deep-dive facts, competing hypotheses & confidence scoring.
+                  Deep-dive facts, competing hypotheses, policy evaluation & action center.
                 </CardDescription>
               </div>
               <Button
@@ -210,15 +336,18 @@ export default function Home() {
               </Button>
             </CardHeader>
             <CardContent>
-              <InvestigationPanel caseId={selectedCaseId} />
+              <InvestigationPanel
+                caseId={selectedCaseId}
+                onActionComplete={loadData}
+              />
             </CardContent>
           </Card>
         )}
 
-        {/* Investigation Queue */}
+        {/* Complete Investigation Queue Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Investigation Queue</CardTitle>
+            <CardTitle>All Exceptions Queue</CardTitle>
             <CardDescription>
               Open reconciliation exceptions requiring automated investigation or review.
             </CardDescription>
@@ -272,7 +401,9 @@ export default function Home() {
                         <TableCell>
                           <Badge
                             variant={
-                              c.status === "completed" ? "default" : "outline"
+                              c.status === "completed" || c.status === "resolved"
+                                ? "default"
+                                : "outline"
                             }
                             className="capitalize"
                           >

@@ -2,16 +2,25 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.ai.investigators.investigator import (
+    AIInvestigator,
+)
 from app.db.session import get_db
+from app.models.bank_transaction import (
+    BankTransaction,
+)
 from app.models.exception import (
     ReconciliationException,
 )
 from app.models.investigation import (
     Investigation,
 )
+from app.models.payment import Payment
 from app.models.policy_decision import (
     PolicyDecision,
 )
+from app.models.refund import Refund
+from app.models.settlement import Settlement
 from app.services.action_service import (
     ActionService,
 )
@@ -101,6 +110,58 @@ async def resolve_case(
             == case_id
         )
     )
+
+    if not investigation:
+        # Automatically run investigation if not yet run
+        payment = db.scalar(
+            select(Payment).where(
+                Payment.razorpay_payment_id
+                == exception.payment_id
+            )
+        )
+        if payment:
+            settlements = list(
+                db.scalars(
+                    select(Settlement).where(
+                        Settlement.payment_id
+                        == exception.payment_id
+                    )
+                ).all()
+            )
+            bank_transactions = []
+            for settlement in settlements:
+                bank_transactions.extend(
+                    db.scalars(
+                        select(
+                            BankTransaction
+                        ).where(
+                            BankTransaction.utr
+                            == settlement.utr
+                        )
+                    ).all()
+                )
+            refunds = list(
+                db.scalars(
+                    select(Refund).where(
+                        Refund.payment_id
+                        == exception.payment_id
+                    )
+                ).all()
+            )
+            investigator = AIInvestigator(db)
+            await investigator.investigate(
+                exception=exception,
+                payment=payment,
+                settlements=settlements,
+                bank_transactions=bank_transactions,
+                refunds=refunds,
+            )
+            investigation = db.scalar(
+                select(Investigation).where(
+                    Investigation.case_id
+                    == case_id
+                )
+            )
 
     if not investigation:
         raise HTTPException(

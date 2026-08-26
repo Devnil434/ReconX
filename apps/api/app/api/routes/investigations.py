@@ -133,17 +133,39 @@ async def run_investigation(
 
     investigator = AIInvestigator(db)
 
-    result = await investigator.investigate(
-        exception=exception,
-        payment=payment,
-        settlements=settlements,
-        bank_transactions=(
-            bank_transactions
-        ),
-        refunds=refunds,
-    )
+    try:
+        result = await investigator.investigate(
+            exception=exception,
+            payment=payment,
+            settlements=settlements,
+            bank_transactions=(
+                bank_transactions
+            ),
+            refunds=refunds,
+        )
+        return result.model_dump()
 
-    return result.model_dump()
+    except Exception as exc:
+        # AI provider unavailable or failed — degrade safely.
+        # Never attempt autonomous action without a verified investigation.
+        from app.services.audit_service import AuditService
+
+        audit = AuditService(db)
+        audit.record(
+            case_id=case_id,
+            event_type="AI_FAILURE",
+            actor="system",
+            payload={"error": str(exc)},
+        )
+
+        exception.status = "human_review"
+        db.commit()
+
+        return {
+            "status": "human_review",
+            "reason": "AI investigation unavailable",
+            "case_id": case_id,
+        }
 
 
 @router.get("/{case_id}")

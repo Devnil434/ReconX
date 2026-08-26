@@ -6,6 +6,7 @@ from app.models.refund import Refund
 from app.models.reconciliation import ReconciliationResult
 from app.models.exception import ReconciliationException
 from app.models.audit_log import AuditLog
+from app.models.audit_event import AuditEvent
 from app.models.webhook_event import WebhookEvent
 from app.models.investigation import Investigation
 from app.models.investigation_evidence import InvestigationEvidence
@@ -23,6 +24,7 @@ __all__ = [
     "ReconciliationResult",
     "ReconciliationException",
     "AuditLog",
+    "AuditEvent",
     "WebhookEvent",
     "Investigation",
     "InvestigationEvidence",
