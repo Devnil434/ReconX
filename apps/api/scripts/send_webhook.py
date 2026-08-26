@@ -1,4 +1,4 @@
-﻿"""
+r"""
 send_webhook.py — Webhook simulator (§5.19)
 
 Signs and POSTs a settlement.processed event to the local API.
@@ -15,12 +15,18 @@ import hmac
 import json
 import os
 import sys
+from pathlib import Path
 
 import requests
+from dotenv import load_dotenv
+
+# Load .env from project root or current dir
+load_dotenv()
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 WEBHOOK_SECRET = os.getenv("RAZORPAY_WEBHOOK_SECRET")
 if not WEBHOOK_SECRET:
-    print("ERROR: RAZORPAY_WEBHOOK_SECRET is not set", file=sys.stderr)
+    print("ERROR: RAZORPAY_WEBHOOK_SECRET is not set in environment or .env file", file=sys.stderr)
     sys.exit(1)
 
 BASE_URL = os.getenv("API_URL", "http://localhost:8000")

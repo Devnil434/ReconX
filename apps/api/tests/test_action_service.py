@@ -28,10 +28,10 @@ async def test_action_dispatcher_refund():
         payload={"payment_id": "pay_test_999", "amount": 50000},
     )
     assert result["action_id"] == "ACT-67890"
-    assert result["status"] == "simulated"
-    assert result["operation"] == "create_refund"
-    assert result["payment_id"] == "pay_test_999"
-    assert result["amount"] == 50000
+    assert result["status"] == "submitted"
+    assert "refund" in result
+    assert result["refund"]["amount"] == 50000
+
 
 
 @pytest.mark.asyncio

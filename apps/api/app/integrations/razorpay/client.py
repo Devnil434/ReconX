@@ -12,7 +12,8 @@ class RazorpayClient:
         self.client = None
 
         if (
-            settings.razorpay_key_id
+            settings.razorpay_mode != "mock"
+            and settings.razorpay_key_id
             and settings.razorpay_key_secret
         ):
             self.client = razorpay.Client(
@@ -21,6 +22,7 @@ class RazorpayClient:
                     settings.razorpay_key_secret,
                 )
             )
+
 
     @property
     def is_live(self) -> bool:

@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_client import generate_latest
 
 from app.api.routes.cases import (
     router as cases_router,
@@ -16,6 +17,9 @@ from app.api.routes.reconciliation import (
 from app.api.routes.webhooks import (
     router as webhook_router,
 )
+from app.core.logging import configure_logging
+
+configure_logging()
 
 app = FastAPI(
     title="ReconX API",
@@ -33,6 +37,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/metrics")
+def metrics():
+    return Response(
+        generate_latest(),
+        media_type="text/plain",
+    )
+
 
 app.include_router(
     health_router

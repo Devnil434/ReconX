@@ -1,0 +1,502 @@
+[
+  {
+    "case_id": "EVAL-0000",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0001",
+    "expected_root_cause": "fee_tax_difference",
+    "expected_action": "AUTO_RESOLVE"
+  },
+  {
+    "case_id": "EVAL-0002",
+    "expected_root_cause": "fee_tax_difference",
+    "expected_action": "AUTO_RESOLVE"
+  },
+  {
+    "case_id": "EVAL-0003",
+    "expected_root_cause": "fee_tax_difference",
+    "expected_action": "AUTO_RESOLVE"
+  },
+  {
+    "case_id": "EVAL-0004",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0005",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0006",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0007",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0008",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0009",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0010",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0011",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0012",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0013",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0014",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0015",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0016",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0017",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0018",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0019",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0020",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0021",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0022",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0023",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0024",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0025",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0026",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0027",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0028",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0029",
+    "expected_root_cause": "fee_tax_difference",
+    "expected_action": "AUTO_RESOLVE"
+  },
+  {
+    "case_id": "EVAL-0030",
+    "expected_root_cause": "fee_tax_difference",
+    "expected_action": "AUTO_RESOLVE"
+  },
+  {
+    "case_id": "EVAL-0031",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0032",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0033",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0034",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0035",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0036",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0037",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0038",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0039",
+    "expected_root_cause": "fee_tax_difference",
+    "expected_action": "AUTO_RESOLVE"
+  },
+  {
+    "case_id": "EVAL-0040",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0041",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0042",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0043",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0044",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0045",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0046",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0047",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0048",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0049",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0050",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0051",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0052",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0053",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0054",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0055",
+    "expected_root_cause": "fee_tax_difference",
+    "expected_action": "AUTO_RESOLVE"
+  },
+  {
+    "case_id": "EVAL-0056",
+    "expected_root_cause": "fee_tax_difference",
+    "expected_action": "AUTO_RESOLVE"
+  },
+  {
+    "case_id": "EVAL-0057",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0058",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0059",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0060",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0061",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0062",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0063",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0064",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0065",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0066",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0067",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0068",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0069",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0070",
+    "expected_root_cause": "fee_tax_difference",
+    "expected_action": "AUTO_RESOLVE"
+  },
+  {
+    "case_id": "EVAL-0071",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0072",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0073",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0074",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0075",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0076",
+    "expected_root_cause": "fee_tax_difference",
+    "expected_action": "AUTO_RESOLVE"
+  },
+  {
+    "case_id": "EVAL-0077",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0078",
+    "expected_root_cause": "fee_tax_difference",
+    "expected_action": "AUTO_RESOLVE"
+  },
+  {
+    "case_id": "EVAL-0079",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0080",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0081",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0082",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0083",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0084",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0085",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0086",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0087",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0088",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0089",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0090",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0091",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0092",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0093",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0094",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  },
+  {
+    "case_id": "EVAL-0095",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0096",
+    "expected_root_cause": "missing_bank_credit",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0097",
+    "expected_root_cause": "unknown_difference",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0098",
+    "expected_root_cause": "partial_settlement",
+    "expected_action": "HUMAN_REVIEW"
+  },
+  {
+    "case_id": "EVAL-0099",
+    "expected_root_cause": "duplicate_settlement",
+    "expected_action": "BLOCK"
+  }
+]
