@@ -1,75 +1,106 @@
-# ReconX Architecture Overview
+# ReconX Architecture Specification
 
-ReconX is an autonomous payment reconciliation investigator designed to process, match, and resolve transaction discrepancies for Razorpay payment operations.
-
----
-
-## Core Philosophy
-
-> **Code** determines *what* happened. (Deterministic matching logic)
-> **AI** determines *why* it happened. (Root cause analysis & explanation)
-> **Policy** determines *what* can happen next. (Safety constraints & bounds)
+> **Autonomous Payment Reconciliation Investigator**
+> *AI investigates. Policy authorizes. Verification proves.*
 
 ---
 
-## High-Level Data Flow
+## 1. High-Level Target Architecture
 
 ```
-   Webhook Intake / Payout Events (Razorpay)
-                  │
-                  ▼
-         Ingestion & Queue
-      (Deduplication & Order Check)
-                  │
-                  ▼
-             PostgreSQL
-                  │
-                  ▼
-    Deterministic Reconciliation Engine
-         │                     │
-      MATCHED              EXCEPTION
-         │                     │
-      [Done]                   ▼
-                        AI Investigator
-                       (Rule + LLM Fallback)
-                               │
-                               ▼
-                         Policy Engine
-                     (Honest Boundary Check)
-                     ┌─────────┴─────────┐
-                     ▼                   ▼
-                Auto-Resolve       Human Review / Block
-             (Fee/Tax mismatches)  (Missing UTRs, Duplicates)
+                         RAZORPAY TEST MODE
+                                │
+                                ▼
+                         WEBHOOK GATEWAY
+                                │
+                   ┌────────────┴────────────┐
+                   │                         │
+              Verify HMAC              Event ID
+              (Raw Body)                dedupe
+                   │                         │
+                   └────────────┬────────────┘
+                                │
+                                ▼
+                         EVENT STORE
+                          PostgreSQL
+                                │
+                                ▼
+                          REDIS QUEUE (RQ)
+                                │
+                                ▼
+                         WORKER POOL
+                                │
+                 ┌──────────────┼──────────────┐
+                 ▼              ▼              ▼
+            RECONCILE      INVESTIGATE       VERIFY
+                 │              │              │
+                 └──────────────┼──────────────┘
+                                ▼
+                          RISK ENGINE
+                                │
+                          POLICY ENGINE
+                                │
+               ┌────────────────┼────────────────┐
+               ▼                ▼                ▼
+          AUTO-RESOLVE     HUMAN REVIEW         BLOCK
+               │                │
+               └────────┬───────┘
+                        ▼
+                  ACTION EXECUTOR
+                        │
+                        ▼
+                   RAZORPAY API
+                        │
+                        ▼
+                  STATE VERIFIER
+                        │
+                        ▼
+                 RECONCILE AGAIN
+                        │
+                        ▼
+                    AUDIT LOG
+                        │
+                        ▼
+                 COMMAND CENTER (Next.js)
 ```
 
 ---
 
-## Architecture Components
+## 2. Component Breakdown
 
-### 1. Ingestion Layer (`apps/api/app/api/routes/webhooks.py`)
-- Ingests events asynchronously from Razorpay webhooks.
-- **Deduplication Check**: Ensures idempotency by checking `event_id` or `payment_id` against previously processed webhook events. Duplicate attempts are immediately responded to with `200 received: true` without reprocessing.
-- **Out-of-Order Handling**: Checks payment lifecycle event stages. Pre-settlement webhook arrivals do not crash the system, and settlements are not duplicated.
+### 2.1 Webhook Gateway & Ingestion Layer (`apps/api/app/api/routes/webhooks.py`)
+- **HMAC SHA256 Signature Verification**: Computes digest over raw request body using `RAZORPAY_WEBHOOK_SECRET`. Rejects mismatched signatures with `401 Unauthorized`.
+- **Event ID Idempotency**: Evaluates `X-Razorpay-Event-Id` header against processed event store. Duplicate events immediately return `200 {"received": true, "duplicate": true}` without triggering redundant pipeline tasks.
+- **Replay Protection**: Rejects events with timestamps older than 5 minutes (`300s`) to guard against replay attacks.
+- **Out-of-Order Resilience**: Ingestion safely stores out-of-order events (e.g., `settlement.processed` arriving before `payment.captured`), ensuring proper lifecycle resolution.
+- **Asynchronous Fast-Response**: The gateway writes raw payload to Event Store, enqueues the reconciliation task to Redis Queue, and responds `200 OK` in `< 5ms`.
 
-### 2. Reconciliation Engine (`apps/api/app/services/reconciliation_service.py`)
-- High-performance execution. Processes up to **144,000 transactions/sec** with sub-millisecond median latencies.
-- Performs mathematical matching between internal order ledgers and gateway payment reports.
-- Emits exceptions when differences are found in payment amounts, gateway fees, or tax deductions.
+### 2.2 Event Store & State Storage
+- **PostgreSQL 17**: Persists normalized ledger entities (`payments`, `settlements`, `bank_transactions`, `refunds`, `cases`, `investigation_evidence`, `audit_logs`).
+- **Data Integrity**: All monetary amounts are stored strictly as integer minor units (paise) to prevent floating-point inaccuracies.
 
-### 3. AI Investigator (`apps/api/app/ai/providers/`)
-- Evaluates exceptions by synthesizing transaction details, matching fee schedules, and analyzing observed values.
-- Formulates hypotheses and assigns confidence ratings.
-- Standardizes output in a clear root cause summary.
+### 2.3 Redis Queue & Worker Pool (`apps/api/app/queue/`)
+- Distributed worker queues (`rq:queue:reconciliation`, `rq:queue:investigation`, `rq:queue:actions`, `rq:queue:dead-letter`).
+- Horizontally scalable (`docker compose up -d --scale worker=4`) with automatic dead-letter queue routing for unrecoverable errors.
 
-### 4. Policy Engine (`apps/api/app/services/policy_service.py`)
-Enforces the **Honest Exception List** pattern:
-- **AUTO_RESOLVE**: Allowed only for low-risk fee/tax deviations with an exact arithmetic match (zero unexplained difference) and high AI confidence ($\ge 85\%$).
-- **HUMAN_REVIEW / BLOCK**: Triggered by missing bank credit (UTR not found), duplicate settlements, partial payouts, low AI confidence, or conflicting evidence signals.
+### 2.4 Deterministic Reconciliation Engine (`apps/api/app/services/reconciliation_service.py`)
+- High-throughput mathematical matching between payments, settlements, and bank credits.
+- Operates at **144,550 tx/sec** with sub-millisecond median latencies (~0.0032ms), identifying 100% of mathematical mismatches without LLM overhead.
 
-### 5. Task & Queue System (`apps/api/app/queue/`)
-- Uses **Redis Queue (RQ)** to buffer reconciliation and investigation tasks.
-- Background worker execution can scale to multiple workers (`--scale worker=4`).
-- Metric endpoints expose queue depths for active queues: `reconciliation`, `investigation`, `actions`, and `dead_letter`.
+### 2.5 AI Investigator (`apps/api/app/ai/`)
+- Evaluates non-matching transactions by synthesizing evidence, calculating fee schedules (2% gateway + 18% GST), and formulating hypotheses.
+- Outputs structured evidence, confidence ratings, and root cause classifications.
+- Graceful degradation: In case of AI timeouts/outages, defaults safely to `HUMAN_REVIEW` with zero automated financial risk.
 
-### 6. Control Center (`apps/web/`)
-- High-fidelity visual dashboard showing system KPI statistics, reconciliation health meters, queue metrics, live streams, and the **Explainability Drawer** detailing why an action was taken or escalated.
+### 2.6 Policy Engine (`apps/api/app/services/policy_service.py`)
+- Enforces strict autonomy boundaries: **The LLM recommends; the Policy Engine authorizes.**
+- Evaluates risk level, difference threshold, confidence score ($\ge 85\%$), and conflicting evidence signals.
+- Authorizes `AUTO_RESOLVE`, routes to `HUMAN_REVIEW`, or enforces `BLOCK`.
+
+### 2.7 Action Executor, State Verifier & Audit Loop
+- Executes policy-authorized resolutions (e.g. fee adjustment, payout capture, refund) using idempotent keys.
+- Immediately performs **State Verification** and triggers a second reconciliation pass to confirm the discrepancy reaches exact `₹0` difference.
+- Produces immutable audit logs documenting the trigger, AI findings, policy sign-off, and state delta.
+
+### 2.8 Command Center (`apps/web/`)
+- Real-time Next.js 16 dashboard providing KPI tracking, health indicators, live case stream, interactive "Why?" explainability drawer, and one-click scenario testing.

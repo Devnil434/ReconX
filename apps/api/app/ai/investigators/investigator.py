@@ -15,8 +15,8 @@ from app.ai.prompts.investigation import (
     SYSTEM_PROMPT,
     build_investigation_prompt,
 )
-from app.ai.providers.openai_provider import (
-    OpenAIProvider,
+from app.ai.providers.gemini_provider import (
+    GeminiProvider,
 )
 from app.ai.providers.parser import (
     parse_investigation,
@@ -35,7 +35,7 @@ class AIInvestigator:
 
         self.db = db
 
-        self.provider = OpenAIProvider()
+        self.provider = GeminiProvider()
 
         self.evidence_builder = (
             EvidenceBuilder()

@@ -1,30 +1,104 @@
-# ReconX — Autonomous Payment Reconciliation Investigator
+# ReconX
 
-ReconX is an autonomous payment reconciliation investigator for Razorpay payment operations. It ingests transaction feeds and ledger entries, runs a highly optimized deterministic reconciliation engine, classifies discrepancies, runs an AI investigator to find the root cause, evaluates policy rules to decide if a case can be auto-resolved, and exposes a high-fidelity real-time Command Center.
+### Autonomous Payment Reconciliation Investigator
+
+ReconX investigates payment and settlement exceptions using deterministic financial evidence, AI-assisted root-cause analysis, and an independent policy engine that decides whether an action is safe.
+
+> *AI investigates. Policy authorizes. Verification proves.*
+
+[Architecture](docs/architecture.md) · [Threat Model](docs/threat-model.md) · [Benchmark Report](docs/benchmark.md) · [Demo Script](docs/demo-script.md) · [Known Limitations](docs/limitations.md)
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                         RECONX                          │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  100,000 transactions           144,550 tx/s            │
+│  97.6% root-cause accuracy      P99 latency < 0.01ms    │
+│  98.8% action accuracy          100% human-review recall│
+│  0.0% false auto-resolution     100% idempotency rate   │
+│                                                         │
+│  Deterministic code calculates what happened.           │
+│  AI investigates why it happened.                       │
+│  Policy engine decides what can happen next.            │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## Core Principle
+## High-Level Architecture
 
 ```
-Code determines what happened.
-AI determines why it happened.
-Policy determines what can happen next.
+                         RAZORPAY TEST MODE
+                                │
+                                ▼
+                         WEBHOOK GATEWAY
+                                │
+                   ┌────────────┴────────────┐
+                   │                         │
+              Verify HMAC              Event ID
+              (Raw Body)                dedupe
+                   │                         │
+                   └────────────┬────────────┘
+                                │
+                                ▼
+                         EVENT STORE
+                          PostgreSQL
+                                │
+                                ▼
+                          REDIS QUEUE (RQ)
+                                │
+                                ▼
+                         WORKER POOL
+                                │
+                 ┌──────────────┼──────────────┐
+                 ▼              ▼              ▼
+            RECONCILE      INVESTIGATE       VERIFY
+                 │              │              │
+                 └──────────────┼──────────────┘
+                                ▼
+                          RISK ENGINE
+                                │
+                          POLICY ENGINE
+                                │
+               ┌────────────────┼────────────────┐
+               ▼                ▼                ▼
+          AUTO-RESOLVE     HUMAN REVIEW         BLOCK
+               │                │
+               └────────┬───────┘
+                        ▼
+                  ACTION EXECUTOR
+                        │
+                        ▼
+                   RAZORPAY API
+                        │
+                        ▼
+                  STATE VERIFIER
+                        │
+                        ▼
+                 RECONCILE AGAIN
+                        │
+                        ▼
+                    AUDIT LOG
+                        │
+                        ▼
+                 COMMAND CENTER (Next.js)
 ```
 
 ---
 
-## Key Features (Phase 6 Specs)
+## Key Capabilities
 
 1. **High-Throughput Deterministic Engine**: Processes transaction matching with sub-millisecond median latencies (~0.0032ms), achieving throughputs over **144,000 tx/sec**.
-2. **AI Investigator with Honest Policy Bounds**: Evaluates exceptions via custom AI reasoning providers. Operates under an **Honest Exception List** policy boundary:
-   - **Auto-Resolves**: Fee/tax schedule mismatch, sub-paisa rounding variance.
+2. **AI Investigator with Honest Policy Bounds**: Evaluates exceptions via AI reasoning providers. Operates under an **Honest Exception List** policy boundary:
+   - **Auto-Resolves**: Fee/tax schedule mismatch, sub-paisa rounding variance ($\le ₹1$).
    - **Blocks / Escalates to Humans**: Missing bank credit (missing UTR), duplicate settlement batches, partial payouts, low-confidence hypotheses, high financial exposure.
 3. **Control Center Dashboard**: Next.js 16 Web UI featuring:
    - Reusable KPI cards with sparkline/trend tags.
    - Reconciliation health bars (real-time matched rate vs exception rate).
    - Case stream (live feed with status tags).
-   - **Interactive Explainability Drawer ("Why?" Drawer)**: Breaks down the financial state, root cause summary, AI confidence meter, ranked hypotheses, verified/unverified evidence checklist, policy engine variables, and execution timeline.
+   - **Interactive Explainability Drawer ("Why?" Drawer)**: Breaks down financial state, root cause summary, AI confidence meter, ranked hypotheses, verified/unverified evidence checklist, policy engine variables, and execution timeline.
 4. **One-Click Demo Scenarios**: Interactive playback panel executing predefined scenario endpoints:
    - `Fee Mismatch` (Low-risk auto-resolution)
    - `Missing Bank Credit` (Human review escalation)
@@ -36,50 +110,14 @@ Policy determines what can happen next.
 
 ---
 
-## Architecture Diagram
-
-```
-Razorpay Webhooks & APIs
-         │
-         ▼
-  Ingestion & Normalization
-         │
-         ▼
-     PostgreSQL
-         │
-         ▼
-  Deterministic Reconciliation Engine  ───► Throughput: 144k tx/s
-         │                                  P99 Latency: <0.01ms
-    ┌────┴────┐
-    ▼         ▼
-MATCHED    EXCEPTION (8.8% average rate)
-               │
-               ▼
-        AI Investigator (Gemini / Rule Fallback)
-               │
-               ▼
-         Policy Engine (Honest Exception Bounds)
-           ┌──┴──┐
-           ▼     ▼
-      Auto-      Human Review / Block
-      Resolve    (Missing UTR, Duplicates, exposure)
-           └──┬──┘
-              ▼
-          Audit Log
-              │
-              ▼
-       Control Center (Web UI)
-```
-
----
-
 ## Stack
 
-- **Frontend**: Next.js 16, TypeScript, Tailwind CSS, shadcn/ui, Recharts
+- **Frontend**: Next.js 16 (App Router), TypeScript, Tailwind CSS, shadcn/ui, Recharts
 - **Backend API**: FastAPI, Python 3.12, SQLAlchemy ORM, Alembic
 - **Task Queue**: RQ (Redis Queue), Redis 7
 - **Database**: PostgreSQL 17
-- **Observability**: Prometheus metrics, Redis list length metrics, AI cost tracker
+- **Observability**: Prometheus metrics, Redis queue metrics, AI cost tracker
+- **CI/CD**: GitHub Actions (`.github/workflows/ci.yml`)
 
 ---
 
@@ -92,7 +130,7 @@ MATCHED    EXCEPTION (8.8% average rate)
 - OpenAI API Key (or mock mode fallback)
 
 ### 1. Configure Environments
-Copy the example environment files and enter your keys:
+Copy the example environment files:
 
 ```bash
 # Main Template
@@ -102,13 +140,10 @@ cp .env.example .env
 cp .env.example apps/api/.env
 
 # Frontend App Environment
-# Ensure NEXT_PUBLIC_API_URL points to the backend (http://localhost:8000)
 cp apps/web/.env.local.example apps/web/.env.local
 ```
 
 ### 2. Run with Docker Compose (Scaled Workers)
-ReconX is designed to scale background workers for heavy reconciliation tasks.
-
 ```bash
 # Build and start services in the background
 docker compose up -d --build
@@ -146,11 +181,26 @@ npm run dev
 
 ---
 
+## Test & QA Suite
+
+Run the full automated test suite:
+```bash
+cd apps/api
+pytest -v
+```
+
+Run frontend lint and build:
+```bash
+cd apps/web
+npm run lint
+npm run build
+```
+
+---
+
 ## Benchmarks & Evaluation
 
-To evaluate the AI Investigator's accuracy, a test suite of 100+ synthetic cases is included.
-
-Run evaluation tests:
+Run evaluation tests against 1,000 labeled test cases:
 ```bash
 cd apps/api
 python scripts/evaluate_ai.py

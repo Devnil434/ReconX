@@ -43,7 +43,7 @@ def get_system_health():
             'database': {'status': 'healthy' if db_ok else 'unhealthy', 'type': 'PostgreSQL 17'},
             'redis': {'status': 'healthy' if redis_ok else 'unhealthy', 'port': 6379},
             'workers': {'status': 'healthy', 'count': 4},
-            'ai_provider': {'status': 'healthy', 'provider': 'OpenAI / Rule Fallback'},
+            'ai_provider': {'status': 'healthy', 'provider': 'Google Gemini (Flash) / Rule Fallback'},
             'razorpay': {'status': 'healthy', 'mode': settings.razorpay_mode or 'mock'},
         },
         'queues': queues,

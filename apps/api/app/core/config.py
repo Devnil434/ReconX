@@ -18,9 +18,16 @@ class Settings(BaseSettings):
     razorpay_webhook_secret: str | None = None
     razorpay_mode: str = "mock"
 
+    # AI Configuration (Gemini)
+    gemini_api_key: str | None = None
+    gemini_model: str = "gemini-2.5-flash"
+
+    # Legacy OpenAI fallback if provided
     openai_api_key: str | None = None
     openai_model: str = "gpt-4o-mini"
 
+    demo_mode: bool = True
+    failure_injection: str | None = None
 
     model_config = SettingsConfigDict(
         env_file=".env",
