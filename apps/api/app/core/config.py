@@ -1,11 +1,7 @@
 from functools import lru_cache
-from pathlib import Path
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-ROOT_DIR = Path(__file__).resolve().parents[4]
-ROOT_ENV = ROOT_DIR / ".env"
 
 
 class Settings(BaseSettings):
