@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     app_name: str = "ReconX"
     database_url: str = "postgresql+psycopg://reconx:reconx_dev_password@localhost:5432/reconx"
     redis_url: str = "redis://localhost:6379/0"
+    cors_origins: str = "http://localhost:3000"
 
     razorpay_key_id: str | None = None
     razorpay_key_secret: str | None = None

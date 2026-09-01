@@ -23,10 +23,17 @@ from app.api.routes.demo import (
 from app.api.routes.system import (
     router as system_router,
 )
+from app.core.config import settings
 from app.core.logging import configure_logging
 from app.core.middleware import RequestIDMiddleware
 
 configure_logging()
+
+cors_origins = [
+    origin.strip()
+    for origin in settings.cors_origins.split(",")
+    if origin.strip()
+]
 
 app = FastAPI(
     title="ReconX API",
@@ -41,7 +48,7 @@ app.add_middleware(RequestIDMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
