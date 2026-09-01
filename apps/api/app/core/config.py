@@ -21,6 +21,15 @@ class Settings(BaseSettings):
                 return v.replace("postgresql://", "postgresql+psycopg://", 1)
         return v
 
+    @field_validator("redis_url", mode="before")
+    @classmethod
+    def validate_redis_url(cls, v: str) -> str:
+        if isinstance(v, str) and v.startswith("https://"):
+            raise ValueError(
+                "REDIS_URL must use the Redis protocol (e.g. 'rediss://default:password@host:6379' or 'redis://localhost:6379/0'), not the Upstash HTTPS REST URL."
+            )
+        return v
+
     razorpay_key_id: str | None = None
     razorpay_key_secret: str | None = None
     razorpay_webhook_secret: str | None = None
