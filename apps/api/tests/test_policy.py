@@ -1,4 +1,4 @@
-﻿from types import SimpleNamespace
+from types import SimpleNamespace
 from app.ai.policies.policy_engine import PolicyEngine
 from app.ai.policies.risk_engine import RiskEngine
 from app.core.action_types import ActionType

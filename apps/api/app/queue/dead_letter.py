@@ -1,4 +1,4 @@
-﻿from rq import Queue
+from rq import Queue
 
 from app.queue.config import redis
 

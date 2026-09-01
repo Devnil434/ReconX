@@ -1,4 +1,4 @@
-﻿class PostActionReconciliation:
+class PostActionReconciliation:
     """
     Re-runs reconciliation after an action completes.
 

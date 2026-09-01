@@ -1,4 +1,4 @@
-﻿from sqlalchemy import select
+from sqlalchemy import select
 
 from app.models.bank_transaction import BankTransaction
 

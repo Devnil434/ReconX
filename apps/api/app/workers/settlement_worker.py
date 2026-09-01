@@ -1,4 +1,4 @@
-﻿"""
+"""
 settlement_worker.py
 
 Processes Razorpay settlement.processed webhook payloads.

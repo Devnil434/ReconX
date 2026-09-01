@@ -1,4 +1,4 @@
-﻿"""
+"""
 webhook_worker.py
 
 RQ worker entry point.  Receives a webhook event_id, fetches the

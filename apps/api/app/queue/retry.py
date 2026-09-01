@@ -1,4 +1,4 @@
-﻿from rq import Retry
+from rq import Retry
 
 
 DEFAULT_RETRY = Retry(

@@ -1,4 +1,4 @@
-﻿import os
+import os
 
 
 def should_fail(failure: str) -> bool:

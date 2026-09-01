@@ -1,4 +1,4 @@
-﻿from app.integrations.razorpay.client import RazorpayClient
+from app.integrations.razorpay.client import RazorpayClient
 
 
 class ActionVerifier:

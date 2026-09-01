@@ -1,4 +1,4 @@
-﻿import pytest
+import pytest
 from unittest.mock import MagicMock
 from app.actions.dispatcher import ActionDispatcher
 from app.actions.refund import RefundAction

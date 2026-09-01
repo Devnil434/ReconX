@@ -1,4 +1,4 @@
-﻿import pytest
+import pytest
 from unittest.mock import AsyncMock, MagicMock
 from app.api.routes.investigations import run_investigation
 from app.models.exception import ReconciliationException
