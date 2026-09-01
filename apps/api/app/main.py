@@ -56,6 +56,17 @@ app.add_middleware(
 )
 
 
+@app.get("/")
+def root():
+    return {
+        "service": "ReconX API",
+        "status": "healthy",
+        "version": "0.2.0",
+        "docs": "/docs",
+        "health": "/health",
+    }
+
+
 @app.get("/metrics")
 def metrics():
     return Response(
