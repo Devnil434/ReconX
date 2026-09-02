@@ -1,4 +1,5 @@
-import { api } from "./client";
+import { api, isNetworkError } from "./client";
+import { MOCK_SYSTEM_HEALTH, MOCK_QUEUE_STATS, MOCK_BENCHMARK } from "./mock-data";
 
 export interface ServiceStatus {
   status: "healthy" | "unhealthy" | "degraded";
@@ -71,16 +72,31 @@ export interface BenchmarkReport {
 }
 
 export async function getSystemHealth(): Promise<SystemHealth> {
-  const res = await api.get("/system");
-  return res.data;
+  try {
+    const res = await api.get("/system");
+    return res.data;
+  } catch (err) {
+    if (isNetworkError(err)) return MOCK_SYSTEM_HEALTH;
+    throw err;
+  }
 }
 
 export async function getQueueStats(): Promise<QueueStats> {
-  const res = await api.get("/system/queues");
-  return res.data;
+  try {
+    const res = await api.get("/system/queues");
+    return res.data;
+  } catch (err) {
+    if (isNetworkError(err)) return MOCK_QUEUE_STATS;
+    throw err;
+  }
 }
 
 export async function getBenchmarkReport(): Promise<BenchmarkReport> {
-  const res = await api.get("/benchmark");
-  return res.data;
+  try {
+    const res = await api.get("/benchmark");
+    return res.data;
+  } catch (err) {
+    if (isNetworkError(err)) return MOCK_BENCHMARK;
+    throw err;
+  }
 }

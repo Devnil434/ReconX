@@ -1,4 +1,5 @@
-import { api } from "./client";
+import { api, isNetworkError } from "./client";
+import { MOCK_DEMO_SCENARIOS } from "./mock-data";
 
 export interface DemoFinancialState {
   payment_amount: number;
@@ -60,6 +61,14 @@ export type DemoScenario =
 export async function triggerDemoScenario(
   scenario: DemoScenario
 ): Promise<DemoScenarioResult> {
-  const res = await api.post(`/demo/scenarios/${scenario}`);
-  return res.data;
+  try {
+    const res = await api.post(`/demo/scenarios/${scenario}`);
+    return res.data;
+  } catch (err) {
+    if (isNetworkError(err)) {
+      // Return the pre-built mock scenario instantly
+      return MOCK_DEMO_SCENARIOS[scenario];
+    }
+    throw err;
+  }
 }

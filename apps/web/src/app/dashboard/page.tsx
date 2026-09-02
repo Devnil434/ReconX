@@ -54,11 +54,13 @@ export default function DashboardPage() {
     setLoading(true);
     try {
       const [sumData, casesData] = await Promise.all([
-        getReconciliationSummary().catch(() => null),
-        listInvestigations().catch(() => []),
+        getReconciliationSummary(),
+        listInvestigations(),
       ]);
-      if (sumData) setSummary(sumData);
+      setSummary(sumData);
       setCases(casesData ?? []);
+    } catch {
+      // Non-network errors (4xx, etc.) — leave existing state
     } finally {
       setLoading(false);
     }
