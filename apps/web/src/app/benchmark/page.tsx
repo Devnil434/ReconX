@@ -12,6 +12,7 @@ import {
 import { TopNav } from "@/components/layout/top-nav";
 import { KpiCard } from "@/components/dashboard/kpi-card";
 import { getBenchmarkReport, type BenchmarkReport } from "@/lib/api/system";
+import { MOCK_BENCHMARK } from "@/lib/api/mock-data";
 
 function StatRow({ label, value, highlight = false }: { label: string; value: string; highlight?: boolean }) {
   return (
@@ -64,14 +65,15 @@ const TAXONOMY_LABELS: Record<string, string> = {
 };
 
 export default function BenchmarkPage() {
-  const [data, setData] = useState<BenchmarkReport | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<BenchmarkReport | null>(MOCK_BENCHMARK);
+  const [loading, setLoading] = useState(false);
 
   async function load() {
-    setLoading(true);
     try {
       const r = await getBenchmarkReport();
-      setData(r);
+      if (r) setData(r);
+    } catch {
+      // Fallback already in place
     } finally {
       setLoading(false);
     }

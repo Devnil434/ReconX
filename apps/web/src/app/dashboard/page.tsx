@@ -24,6 +24,7 @@ import {
   type BatchRunResult,
 } from "@/lib/api/reconciliation";
 import { listInvestigations, type InvestigationCase } from "@/lib/api/investigations";
+import { MOCK_SUMMARY, MOCK_CASES } from "@/lib/api/mock-data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,24 +44,23 @@ import {
 } from "@/components/ui/table";
 
 export default function DashboardPage() {
-  const [summary, setSummary] = useState<ReconciliationSummary | null>(null);
-  const [cases, setCases] = useState<InvestigationCase[]>([]);
+  const [summary, setSummary] = useState<ReconciliationSummary | null>(MOCK_SUMMARY);
+  const [cases, setCases] = useState<InvestigationCase[]>(MOCK_CASES);
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [runningBatch, setRunningBatch] = useState(false);
   const [lastBatch, setLastBatch] = useState<BatchRunResult | null>(null);
 
   const loadData = useCallback(async () => {
-    setLoading(true);
     try {
       const [sumData, casesData] = await Promise.all([
         getReconciliationSummary(),
         listInvestigations(),
       ]);
-      setSummary(sumData);
-      setCases(casesData ?? []);
+      if (sumData) setSummary(sumData);
+      if (casesData && casesData.length > 0) setCases(casesData);
     } catch {
-      // Non-network errors (4xx, etc.) — leave existing state
+      // Fallback already in place
     } finally {
       setLoading(false);
     }

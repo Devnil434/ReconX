@@ -64,11 +64,7 @@ export async function triggerDemoScenario(
   try {
     const res = await api.post(`/demo/scenarios/${scenario}`);
     return res.data;
-  } catch (err) {
-    if (isNetworkError(err)) {
-      // Return the pre-built mock scenario instantly
-      return MOCK_DEMO_SCENARIOS[scenario];
-    }
-    throw err;
+  } catch {
+    return MOCK_DEMO_SCENARIOS[scenario];
   }
 }

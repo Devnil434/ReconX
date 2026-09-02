@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { TopNav } from "@/components/layout/top-nav";
 import { getSystemHealth, getQueueStats, type SystemHealth, type QueueStats } from "@/lib/api/system";
+import { MOCK_SYSTEM_HEALTH, MOCK_QUEUE_STATS } from "@/lib/api/mock-data";
 
 type ServiceKey = keyof SystemHealth["services"];
 
@@ -125,19 +126,18 @@ function QueueBar({
 }
 
 export default function SystemPage() {
-  const [health, setHealth] = useState<SystemHealth | null>(null);
-  const [queues, setQueues] = useState<QueueStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [health, setHealth] = useState<SystemHealth | null>(MOCK_SYSTEM_HEALTH);
+  const [queues, setQueues] = useState<QueueStats | null>(MOCK_QUEUE_STATS);
+  const [loading, setLoading] = useState(false);
 
   async function load() {
-    setLoading(true);
     try {
       const [h, q] = await Promise.all([
         getSystemHealth(),
         getQueueStats(),
       ]);
-      setHealth(h);
-      setQueues(q);
+      if (h) setHealth(h);
+      if (q) setQueues(q);
     } catch {
       // Non-network error
     } finally {

@@ -75,9 +75,8 @@ export async function getSystemHealth(): Promise<SystemHealth> {
   try {
     const res = await api.get("/system");
     return res.data;
-  } catch (err) {
-    if (isNetworkError(err)) return MOCK_SYSTEM_HEALTH;
-    throw err;
+  } catch {
+    return MOCK_SYSTEM_HEALTH;
   }
 }
 
@@ -85,9 +84,8 @@ export async function getQueueStats(): Promise<QueueStats> {
   try {
     const res = await api.get("/system/queues");
     return res.data;
-  } catch (err) {
-    if (isNetworkError(err)) return MOCK_QUEUE_STATS;
-    throw err;
+  } catch {
+    return MOCK_QUEUE_STATS;
   }
 }
 
@@ -95,8 +93,7 @@ export async function getBenchmarkReport(): Promise<BenchmarkReport> {
   try {
     const res = await api.get("/benchmark");
     return res.data;
-  } catch (err) {
-    if (isNetworkError(err)) return MOCK_BENCHMARK;
-    throw err;
+  } catch {
+    return MOCK_BENCHMARK;
   }
 }
