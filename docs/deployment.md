@@ -48,16 +48,20 @@ configuration uses another path.
 
 ## 3. Deploy the frontend on Vercel
 
-Import the repository into Vercel and set **Root Directory** to `apps/web`.
-Add this production environment variable, then deploy:
+The frontend is deployed to Vercel at [https://reconx-phi.vercel.app](https://reconx-phi.vercel.app).
+
+When configuring a new deployment:
+1. Import the repository into Vercel and set **Root Directory** to `apps/web`.
+2. Add this production environment variable:
 
 ```text
-NEXT_PUBLIC_API_URL=https://<api-host>
+NEXT_PUBLIC_API_URL=https://<your-render-api-host>
 ```
 
-Copy the resulting Vercel production URL into the API service's
-`CORS_ORIGINS` value. For preview environments, add any required preview URLs
-as comma-separated origins and redeploy the API.
+3. Add the resulting Vercel URL (`https://reconx-phi.vercel.app`) to the backend API `CORS_ORIGINS` environment variable in Render.
+
+> [!NOTE]
+> **Built-in Offline Resilience**: ReconX includes a built-in offline demo fallback layer. If the backend is starting up or temporarily unreachable, the frontend seamlessly serves high-fidelity synthetic demo data (1,284 transactions, 37 exceptions across all policy lanes) so the Command Center is always fully interactive.
 
 ## Release checklist
 
