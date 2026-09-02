@@ -133,11 +133,13 @@ export default function SystemPage() {
     setLoading(true);
     try {
       const [h, q] = await Promise.all([
-        getSystemHealth().catch(() => null),
-        getQueueStats().catch(() => null),
+        getSystemHealth(),
+        getQueueStats(),
       ]);
-      if (h) setHealth(h);
-      if (q) setQueues(q);
+      setHealth(h);
+      setQueues(q);
+    } catch {
+      // Non-network error
     } finally {
       setLoading(false);
     }
