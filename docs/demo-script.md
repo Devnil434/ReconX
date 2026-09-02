@@ -41,7 +41,7 @@ This script outlines the exact structure for the 5-minute buildathon pitch video
 ---
 
 ### Minute 3: Live Command Center Walkthrough (1:30 – 3:00)
-- **Visual**: Open the ReconX Dashboard (`http://localhost:3000/dashboard`).
+- **Visual**: Open the ReconX Dashboard (`https://reconx-phi.vercel.app/dashboard` or `http://localhost:3000/dashboard`).
 - **Narrative & Actions**:
   1. **Show KPI Bar & Health Meters**:
      > "Here in our Command Center, we see 100,000 transactions processed with a 91.2% match rate. Crucially, our False Auto-Resolution rate is 0.0%."

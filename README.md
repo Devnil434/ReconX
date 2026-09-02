@@ -2,6 +2,8 @@
 
 ### Autonomous Payment Reconciliation Investigator
 
+**Live Demo**: [https://reconx-phi.vercel.app/dashboard](https://reconx-phi.vercel.app/dashboard)
+
 ReconX investigates payment and settlement exceptions using deterministic financial evidence, AI-assisted root-cause analysis, and an independent policy engine that decides whether an action is safe.
 
 > *AI investigates. Policy authorizes. Verification proves.*
