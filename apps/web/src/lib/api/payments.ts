@@ -47,23 +47,39 @@ export interface WebhookEventRow {
 export async function createOrder(
   payload: CreateOrderPayload
 ): Promise<OrderDetails> {
-  const endpoint =
-    typeof window !== "undefined"
-      ? "/api/payments/create-order"
-      : `${API_BASE}/api/payments/create-order`;
+  const primary = `${API_BASE}/api/payments/create-order`;
 
-  const res = await fetch(endpoint, {
+  try {
+    const res = await fetch(primary, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data.order_id && !data.order_id.startsWith("order_mock_")) {
+        return data as OrderDetails;
+      }
+    }
+  } catch (err) {
+    console.warn("Primary create-order failed, attempting fallback:", err);
+  }
+
+  // Fallback to internal Next.js API route
+  const fallback = typeof window !== "undefined" ? "/api/payments/create-order" : primary;
+  const resFallback = await fetch(fallback, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
-  if (!res.ok) {
-    const detail = await res.text();
-    throw new Error(`Order creation failed (${res.status}): ${detail}`);
+  if (!resFallback.ok) {
+    const detail = await resFallback.text();
+    throw new Error(`Order creation failed (${resFallback.status}): ${detail}`);
   }
 
-  return res.json() as Promise<OrderDetails>;
+  return resFallback.json() as Promise<OrderDetails>;
 }
 
 export async function getWebhookEvents(

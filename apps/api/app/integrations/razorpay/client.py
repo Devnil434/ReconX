@@ -87,19 +87,30 @@ class RazorpayClient:
         receipt: str | None = None,
     ) -> dict[str, Any]:
         """Create a Razorpay order server-side for Checkout.js integration."""
-        if self.client is None:
-            return {
-                "id": f"order_mock_{receipt or 'test'}",
+        client = self.client
+        if client is None:
+            try:
+                client = razorpay.Client(
+                    auth=(
+                        settings.razorpay_key_id or "rzp_test_TUHiDLDs9QGDld",
+                        settings.razorpay_key_secret or "XXMgpzs4oCikbdE4b2aqq9a6",
+                    )
+                )
+            except Exception:
+                client = None
+
+        if client is not None:
+            data: dict[str, Any] = {
                 "amount": amount,
                 "currency": currency,
-                "mock": True,
             }
+            if receipt:
+                data["receipt"] = receipt
+            return client.order.create(data)  # type: ignore[attr-defined]
 
-        data: dict[str, Any] = {
+        return {
+            "id": f"order_mock_{receipt or 'test'}",
             "amount": amount,
             "currency": currency,
+            "mock": True,
         }
-        if receipt:
-            data["receipt"] = receipt
-
-        return self.client.order.create(data)  # type: ignore[attr-defined]
