@@ -65,8 +65,8 @@ interface PipelineStep {
 
 interface PaymentResult {
   razorpay_payment_id: string;
-  razorpay_order_id: string;
-  razorpay_signature: string;
+  razorpay_order_id?: string;
+  razorpay_signature?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -148,6 +148,7 @@ export default function TestPaymentPage() {
   const pollRef   = useRef<ReturnType<typeof setInterval> | null>(null);
   const seenIds   = useRef<Set<string>>(new Set());
   const seenWIds  = useRef<Set<string>>(new Set());
+  const paymentSucceededRef = useRef<boolean>(false);
 
   // ── Load Checkout.js script once ─────────────────────────────
   useEffect(() => {
@@ -167,6 +168,7 @@ export default function TestPaymentPage() {
   function reset() {
     setSteps(INITIAL_STEPS.map(s => ({ ...s })));
     setPaymentResult(null);
+    paymentSucceededRef.current = false;
     setError(null);
     seenIds.current.clear();
     seenWIds.current.clear();
@@ -227,6 +229,7 @@ export default function TestPaymentPage() {
   async function handlePay() {
     setLoading(true);
     setError(null);
+    paymentSucceededRef.current = false;
 
     const effectivePaise = customAmount
       ? Math.round(parseFloat(customAmount) * 100)
@@ -275,11 +278,17 @@ export default function TestPaymentPage() {
         notes:       { integration: "ReconX Test Mode", source: "test-payment-page" },
         theme:       { color: "#6366f1" },
         handler: (response: PaymentResult) => {
+          paymentSucceededRef.current = true;
           setPaymentResult(response);
+          patchStep("checkout", {
+            status: "success",
+            timestamp: new Date().toLocaleTimeString(),
+            detail: `Payment ID: ${response.razorpay_payment_id}`,
+          });
         },
         modal: {
           ondismiss: () => {
-            if (!paymentResult) {
+            if (!paymentSucceededRef.current) {
               setError("Payment cancelled. You can try again.");
               patchStep("checkout", { status: "error", detail: "Checkout dismissed" });
               patchStep("webhook",  { status: "idle" });
@@ -379,9 +388,14 @@ export default function TestPaymentPage() {
             <p className="text-sm font-semibold text-primary mb-2">✅ Payment Successful — waiting for webhook…</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
               {[
-                { label: "Payment ID",  value: paymentResult.razorpay_payment_id },
-                { label: "Order ID",    value: paymentResult.razorpay_order_id   },
-                { label: "Signature",   value: paymentResult.razorpay_signature.slice(0, 16) + "…" },
+                { label: "Payment ID",  value: paymentResult.razorpay_payment_id || "N/A" },
+                { label: "Order ID",    value: paymentResult.razorpay_order_id || "Standard Checkout (Direct)" },
+                {
+                  label: "Signature",
+                  value: paymentResult.razorpay_signature
+                    ? `${paymentResult.razorpay_signature.slice(0, 16)}…`
+                    : "Verified via Webhook HMAC",
+                },
               ].map(f => (
                 <div key={f.label} className="rounded-lg border border-border/40 bg-card px-3 py-2">
                   <p className="text-[10px] text-muted-foreground">{f.label}</p>

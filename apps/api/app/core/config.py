@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     razorpay_key_id: str | None = None
     razorpay_key_secret: str | None = None
     razorpay_webhook_secret: str | None = None
-    razorpay_mode: str = "mock"
+    razorpay_mode: str = "test"
 
     # AI Configuration (Gemini)
     gemini_api_key: str | None = None
