@@ -90,7 +90,11 @@ const INITIAL_STEPS: PipelineStep[] = [
 declare global {
   interface Window {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Razorpay: new (options: Record<string, any>) => { open(): void };
+    Razorpay: new (options: Record<string, any>) => {
+      open(): void;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      on(event: string, callback: (response: any) => void): void;
+    };
   }
 }
 
@@ -273,7 +277,6 @@ export default function TestPaymentPage() {
         currency:    order.currency || "INR",
         name:        "ReconX",
         description: "⚡ Autonomous Reconciliation · TEST MODE",
-        image:       "/favicon.ico",
         prefill:     { name, email, contact },
         notes:       { integration: "ReconX Test Mode", source: "test-payment-page" },
         theme:       { color: "#6366f1" },
@@ -298,12 +301,21 @@ export default function TestPaymentPage() {
         },
       };
 
-      // Only attach order_id if it's a real Razorpay Order ID
+      // Attach order_id if present
       if (order.order_id && order.order_id.startsWith("order_") && !order.order_id.startsWith("order_mock_")) {
         rzpOptions.order_id = order.order_id;
       }
 
       const rzp = new window.Razorpay(rzpOptions);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      rzp.on("payment.failed", (resp: any) => {
+        const desc = resp?.error?.description || resp?.error?.reason || "Payment was declined or failed in Razorpay.";
+        console.warn("Razorpay payment.failed:", resp);
+        setError(`Payment failed: ${desc}`);
+        patchStep("checkout", { status: "error", detail: desc });
+        patchStep("webhook", { status: "idle" });
+        stopPolling();
+      });
       rzp.open();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);

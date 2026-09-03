@@ -30,9 +30,9 @@ class Settings(BaseSettings):
             )
         return v
 
-    razorpay_key_id: str | None = None
-    razorpay_key_secret: str | None = None
-    razorpay_webhook_secret: str | None = None
+    razorpay_key_id: str | None = "rzp_test_TUHiDLDs9QGDld"
+    razorpay_key_secret: str | None = "XXMgpzs4oCikbdE4b2aqq9a6"
+    razorpay_webhook_secret: str | None = "22WNn-ET.Xaqncn"
     razorpay_mode: str = "test"
 
     # AI Configuration (Gemini)

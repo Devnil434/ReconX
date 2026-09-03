@@ -10,8 +10,8 @@ from app.core.config import settings
 class RazorpayClient:
     def __init__(self):
         self.client = None
-        key_id = settings.razorpay_key_id
-        key_secret = settings.razorpay_key_secret
+        key_id = settings.razorpay_key_id or "rzp_test_TUHiDLDs9QGDld"
+        key_secret = settings.razorpay_key_secret or "XXMgpzs4oCikbdE4b2aqq9a6"
         mode = (settings.razorpay_mode or "test").strip().lower()
 
         if mode != "mock" and key_id and key_secret:
