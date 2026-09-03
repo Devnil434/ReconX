@@ -47,43 +47,20 @@ export interface WebhookEventRow {
 export async function createOrder(
   payload: CreateOrderPayload
 ): Promise<OrderDetails> {
-  // 1. In browser, try Vercel Serverless Function first (<200ms, guaranteed real order)
-  if (typeof window !== "undefined") {
-    try {
-      const res = await fetch("/api/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (
-          data.order_id &&
-          data.order_id.startsWith("order_") &&
-          !data.order_id.startsWith("order_mock_")
-        ) {
-          return data as OrderDetails;
-        }
-      }
-    } catch (err) {
-      console.warn("Direct order endpoint failed, falling back to Render API:", err);
-    }
-  }
+  const endpoint = `${API_BASE}/api/payments/create-order`;
 
-  // 2. Fallback to Render backend
-  const renderEndpoint = `${API_BASE}/api/payments/create-order`;
-  const resRender = await fetch(renderEndpoint, {
+  const res = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
-  if (!resRender.ok) {
-    const detail = await resRender.text();
-    throw new Error(`Order creation failed (${resRender.status}): ${detail}`);
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(`Order creation failed (${res.status}): ${detail}`);
   }
 
-  return resRender.json() as Promise<OrderDetails>;
+  return res.json() as Promise<OrderDetails>;
 }
 
 export async function getWebhookEvents(
