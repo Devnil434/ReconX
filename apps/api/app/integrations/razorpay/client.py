@@ -10,18 +10,17 @@ from app.core.config import settings
 class RazorpayClient:
     def __init__(self):
         self.client = None
+        key_id = settings.razorpay_key_id
+        key_secret = settings.razorpay_key_secret
+        mode = (settings.razorpay_mode or "test").strip().lower()
 
-        if (
-            settings.razorpay_mode != "mock"
-            and settings.razorpay_key_id
-            and settings.razorpay_key_secret
-        ):
-            self.client = razorpay.Client(
-                auth=(
-                    settings.razorpay_key_id,
-                    settings.razorpay_key_secret,
+        if mode != "mock" and key_id and key_secret:
+            try:
+                self.client = razorpay.Client(
+                    auth=(key_id, key_secret)
                 )
-            )
+            except Exception:
+                self.client = None
 
 
     @property

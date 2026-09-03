@@ -256,16 +256,18 @@ export default function TestPaymentPage() {
       patchStep("checkout", {
         status: "success",
         timestamp: new Date().toLocaleTimeString(),
-        detail: `order_id: ${order.order_id}`,
+        detail: order.order_id && !order.order_id.startsWith("order_mock_")
+          ? `order_id: ${order.order_id}`
+          : "Standard Checkout (Test Mode)",
       });
       patchStep("webhook", { status: "pending" });
       startPolling();
 
-      const rzp = new window.Razorpay({
-        key:         order.key_id,
-        order_id:    order.order_id,
-        amount:      order.amount,
-        currency:    order.currency,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const rzpOptions: Record<string, any> = {
+        key:         order.key_id || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_TUHiDLDs9QGDld",
+        amount:      order.amount || effectivePaise,
+        currency:    order.currency || "INR",
         name:        "ReconX",
         description: "⚡ Autonomous Reconciliation · TEST MODE",
         image:       "/favicon.ico",
@@ -285,8 +287,14 @@ export default function TestPaymentPage() {
             }
           },
         },
-      });
+      };
 
+      // Only attach order_id if it's a real Razorpay Order ID
+      if (order.order_id && order.order_id.startsWith("order_") && !order.order_id.startsWith("order_mock_")) {
+        rzpOptions.order_id = order.order_id;
+      }
+
+      const rzp = new window.Razorpay(rzpOptions);
       rzp.open();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
