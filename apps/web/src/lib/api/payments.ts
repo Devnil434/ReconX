@@ -47,39 +47,43 @@ export interface WebhookEventRow {
 export async function createOrder(
   payload: CreateOrderPayload
 ): Promise<OrderDetails> {
-  const primary = `${API_BASE}/api/payments/create-order`;
-
-  try {
-    const res = await fetch(primary, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      if (data.order_id && !data.order_id.startsWith("order_mock_")) {
-        return data as OrderDetails;
+  // 1. In browser, try Vercel Serverless Function first (<200ms, guaranteed real order)
+  if (typeof window !== "undefined") {
+    try {
+      const res = await fetch("/api/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (
+          data.order_id &&
+          data.order_id.startsWith("order_") &&
+          !data.order_id.startsWith("order_mock_")
+        ) {
+          return data as OrderDetails;
+        }
       }
+    } catch (err) {
+      console.warn("Direct order endpoint failed, falling back to Render API:", err);
     }
-  } catch (err) {
-    console.warn("Primary create-order failed, attempting fallback:", err);
   }
 
-  // Fallback to internal Next.js API route
-  const fallback = typeof window !== "undefined" ? "/api/payments/create-order" : primary;
-  const resFallback = await fetch(fallback, {
+  // 2. Fallback to Render backend
+  const renderEndpoint = `${API_BASE}/api/payments/create-order`;
+  const resRender = await fetch(renderEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
-  if (!resFallback.ok) {
-    const detail = await resFallback.text();
-    throw new Error(`Order creation failed (${resFallback.status}): ${detail}`);
+  if (!resRender.ok) {
+    const detail = await resRender.text();
+    throw new Error(`Order creation failed (${resRender.status}): ${detail}`);
   }
 
-  return resFallback.json() as Promise<OrderDetails>;
+  return resRender.json() as Promise<OrderDetails>;
 }
 
 export async function getWebhookEvents(
