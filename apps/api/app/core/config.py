@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     app_name: str = "ReconX"
     database_url: str = "postgresql+psycopg://reconx:reconx_dev_password@localhost:5432/reconx"
     redis_url: str = "redis://localhost:6379/0"
-    cors_origins: str = "http://localhost:3000,https://reconx-phi.vercel.app,https://recon-x-434.vercel.app"
+    cors_origins: str = "http://localhost:3000,https://reconx-phi.vercel.app"
 
     @field_validator("database_url", mode="before")
     @classmethod
