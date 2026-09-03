@@ -6,11 +6,13 @@ import {
   Activity,
   BarChart3,
   Cpu,
+  CreditCard,
   Zap,
 } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: Activity },
+  { href: "/test-payment", label: "Test Payment", icon: CreditCard },
   { href: "/benchmark", label: "Benchmark", icon: BarChart3 },
   { href: "/system",    label: "System",    icon: Cpu },
 ];
