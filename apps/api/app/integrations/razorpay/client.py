@@ -80,3 +80,27 @@ class RazorpayClient:
             payment_id,
             data,
         )
+
+    def create_order(
+        self,
+        amount: int,
+        currency: str = "INR",
+        receipt: str | None = None,
+    ) -> dict[str, Any]:
+        """Create a Razorpay order server-side for Checkout.js integration."""
+        if self.client is None:
+            return {
+                "id": f"order_mock_{receipt or 'test'}",
+                "amount": amount,
+                "currency": currency,
+                "mock": True,
+            }
+
+        data: dict[str, Any] = {
+            "amount": amount,
+            "currency": currency,
+        }
+        if receipt:
+            data["receipt"] = receipt
+
+        return self.client.order.create(data)  # type: ignore[attr-defined]

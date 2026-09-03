@@ -1,19 +1,24 @@
 import json
 from datetime import datetime, timezone
+from typing import List, Optional
 
 from fastapi import (
     APIRouter,
     Depends,
     Header,
     HTTPException,
+    Query,
     Request,
 )
+from pydantic import BaseModel
+from sqlalchemy import desc, select
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.integrations.razorpay.webhooks import (
     verify_webhook_signature,
 )
+from app.models.webhook_event import WebhookEvent
 from app.queue.config import reconciliation_queue
 from app.queue.retry import DEFAULT_RETRY
 from app.services.webhook_service import WebhookService
@@ -22,6 +27,21 @@ router = APIRouter(
     prefix="/webhooks",
     tags=["Webhooks"],
 )
+
+
+# ---------------------------------------------------------------------------
+# Schema for the events list endpoint
+# ---------------------------------------------------------------------------
+
+class WebhookEventOut(BaseModel):
+    event_id: str
+    event_type: str
+    status: str
+    attempts: int
+    created_at: datetime
+    processed_at: Optional[datetime]
+
+    model_config = {"from_attributes": True}
 
 # ---------------------------------------------------------------------------
 # Replay guard (§5.18)
@@ -123,3 +143,28 @@ async def razorpay_webhook(
     return {
         "received": True,
     }
+
+
+# ---------------------------------------------------------------------------
+# Read-only events list — used by the frontend test-payment pipeline tracker
+# ---------------------------------------------------------------------------
+
+
+@router.get("/events", response_model=List[WebhookEventOut])
+def list_webhook_events(
+    limit: int = Query(default=10, le=100),
+    db: Session = Depends(get_db),
+) -> List[WebhookEventOut]:
+    """
+    Return the most recent webhook events ordered by creation time desc.
+
+    This endpoint is intentionally unauthenticated (no Razorpay secrets
+    are exposed) and is used only by the internal test-payment page to
+    display live pipeline status.  Payload/signature columns are excluded.
+    """
+    rows = db.execute(
+        select(WebhookEvent)
+        .order_by(desc(WebhookEvent.created_at))
+        .limit(limit)
+    ).scalars().all()
+    return [WebhookEventOut.model_validate(r) for r in rows]

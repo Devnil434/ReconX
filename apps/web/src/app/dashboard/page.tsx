@@ -17,6 +17,7 @@ import { HonestExceptionList } from "@/components/dashboard/honest-exception-lis
 import { DemoBanner } from "@/components/dashboard/demo-banner";
 import { CaseStream } from "@/components/dashboard/case-stream";
 import { InvestigationPanel } from "@/components/investigations/investigation-panel";
+import { RazorpayStatusWidget } from "@/components/dashboard/razorpay-status-widget";
 import {
   getReconciliationSummary,
   runBatchReconciliation,
@@ -217,6 +218,9 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+
+        {/* ─── Razorpay Test Mode Live Widget ─────────── */}
+        <RazorpayStatusWidget />
 
         {/* ─── Honest Exception List ───────────────────── */}
         <HonestExceptionList />

@@ -18,9 +18,18 @@ from app.models.webhook_event import WebhookEvent
 _DISPATCH: dict = {}
 
 try:
-    import json
     from app.workers.settlement_worker import process_settlement_event
     _DISPATCH["settlement.processed"] = process_settlement_event
+except ImportError:
+    pass
+
+try:
+    from app.workers.payment_worker import (
+        process_payment_captured,
+        process_payment_authorized,
+    )
+    _DISPATCH["payment.captured"] = process_payment_captured
+    _DISPATCH["payment.authorized"] = process_payment_authorized
 except ImportError:
     pass
 

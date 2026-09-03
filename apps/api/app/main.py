@@ -24,6 +24,9 @@ from app.api.routes.demo import (
 from app.api.routes.system import (
     router as system_router,
 )
+from app.api.routes.payments import (
+    router as payments_router,
+)
 from app.core.config import settings
 from app.core.logging import configure_logging
 from app.core.middleware import RequestIDMiddleware
@@ -101,4 +104,8 @@ app.include_router(
 
 app.include_router(
     demo_router
+)
+
+app.include_router(
+    payments_router
 )
