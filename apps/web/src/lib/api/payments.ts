@@ -47,7 +47,12 @@ export interface WebhookEventRow {
 export async function createOrder(
   payload: CreateOrderPayload
 ): Promise<OrderDetails> {
-  const res = await fetch(`${API_BASE}/api/payments/create-order`, {
+  const endpoint =
+    typeof window !== "undefined"
+      ? "/api/payments/create-order"
+      : `${API_BASE}/api/payments/create-order`;
+
+  const res = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
